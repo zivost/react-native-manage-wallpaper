@@ -2,13 +2,13 @@ package com.mmmgbhutta.reactnative.wallpapermanager;
 
 import android.app.Activity;
 import android.app.WallpaperManager;
-import android.net.Uri;
-import android.os.Build;
-import android.util.Log;
-import android.util.Base64;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
+import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -19,24 +19,20 @@ import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
-
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.Callback;
-
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.views.imagehelper.ResourceDrawableIdHelper;
 import com.facebook.react.views.imagehelper.ImageSource;
+import com.facebook.react.views.imagehelper.ResourceDrawableIdHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.IOException;
-
-import static android.support.v7.widget.StaggeredGridLayoutManager.TAG;
 
 public class ManageWallpaperModule extends ReactContextBaseJavaModule {
 
