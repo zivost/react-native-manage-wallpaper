@@ -44,6 +44,7 @@ public class ManageWallpaperModule extends ReactContextBaseJavaModule {
     private Uri mUri;
     private ReactApplicationContext mApplicationContext;
     private Activity mCurrentActivity;
+    private Target picassoTarget;
 
     public ManageWallpaperModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -88,35 +89,53 @@ public class ManageWallpaperModule extends ReactContextBaseJavaModule {
         rctCallback = callback;
         rctParams = params;
 
+        mCurrentActivity = getCurrentActivity();
+
+        if (mCurrentActivity == null) {
+            sendMessage("error", "CurrentActivity is null", source);
+        }
+
+//        Bitmap result=Picasso.get().load(source).in
+//                .load(source);
+//
+//        WallpaperManager wallpaperManager = WallpaperManager.getInstance(mApplicationContext);
+//        try {
+//            wallpaperManager.setBitmap(result);
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+
+        picassoTarget = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Log.e("PICASSO", "OnBitmapLoaded");
+                WallpaperManager wallpaperManager = WallpaperManager.getInstance(mApplicationContext);
+                try {
+                    wallpaperManager.setBitmap(bitmap);
+                    sendMessage("success", "Set Wallpaper Success", source);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e("PICASSO", "IOException->" + e.getMessage());
+                    sendMessage("error", "Exception in Picasso：" + e.getMessage(), source);
+                }
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                Log.e("PICASSO", "" + e.getMessage());
+                sendMessage("error", "Exception in Picasso：" + e.getMessage(), source);
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                Log.e("PICASSO", "OnPrepareLoad");
+            }
+        };
+
         mCurrentActivity.runOnUiThread(new Runnable() {
             public void run() {
                 Util.assertMainThread();
-                Picasso.get().load(source).into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        Log.e("PICASSO", "OnBitmapLoaded");
-                        WallpaperManager wallpaperManager = WallpaperManager.getInstance(mApplicationContext);
-                        try {
-                            wallpaperManager.setBitmap(bitmap);
-                            sendMessage("success", "Set Wallpaper Success", source);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Log.e("PICASSO", "IOException->" + e.getMessage());
-                            sendMessage("error", "Exception in Picasso：" + e.getMessage(), source);
-                        }
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                        Log.e("PICASSO", "" + e.getMessage());
-                        sendMessage("error", "Exception in Picasso：" + e.getMessage(), source);
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        Log.e("PICASSO", "OnPrepareLoad");
-                    }
-                });
+                Picasso.get().load(source).into(picassoTarget);
             }
         });
     }
@@ -154,11 +173,11 @@ public class ManageWallpaperModule extends ReactContextBaseJavaModule {
                     Util.assertMainThread();
                     try {
                         Glide
-                            .with(mApplicationContext)
-                            .asBitmap()
-                            .apply(requestOptions())
-                            .load(Base64.decode(source.replaceAll("data:image\\/.*;base64,", ""), Base64.DEFAULT))
-                            .into(customTarget);
+                                .with(mApplicationContext)
+                                .asBitmap()
+                                .apply(requestOptions())
+                                .load(Base64.decode(source.replaceAll("data:image\\/.*;base64,", ""), Base64.DEFAULT))
+                                .into(customTarget);
                     } catch (Exception e) {
                         sendMessage("error", "Exception in Glide：" + e.getMessage(), source);
                     }
@@ -177,8 +196,8 @@ public class ManageWallpaperModule extends ReactContextBaseJavaModule {
             if (mUri.getScheme() == null) {
                 mUri = null;
             } else if(
-                !mUri.getScheme().equals("http") &&
-                !mUri.getScheme().equals("https")
+                    !mUri.getScheme().equals("http") &&
+                            !mUri.getScheme().equals("https")
             ) {
                 useStorageFile = true;
             }
@@ -199,7 +218,7 @@ public class ManageWallpaperModule extends ReactContextBaseJavaModule {
                         } else if (type.equals("lock")) {
                             wallpaperManager.setBitmap(mBitmap, null, true, WallpaperManager.FLAG_LOCK);
                         } else {
-                            wallpaperManager.setBitmap(mBitmap, null, true, WallpaperManager.FLAG_LOCK | WallpaperManager.FLAG_SYSTEM);   
+                            wallpaperManager.setBitmap(mBitmap, null, true, WallpaperManager.FLAG_LOCK | WallpaperManager.FLAG_SYSTEM);
                         }
                     } else {
                         wallpaperManager.setBitmap(mBitmap);
@@ -218,11 +237,11 @@ public class ManageWallpaperModule extends ReactContextBaseJavaModule {
                     Util.assertMainThread();
                     try{
                         Glide
-                            .with(mApplicationContext)
-                            .asBitmap()
-                            .apply(requestOptions())
-                            .load(mUri)
-                            .into(customTarget);
+                                .with(mApplicationContext)
+                                .asBitmap()
+                                .apply(requestOptions())
+                                .load(mUri)
+                                .into(customTarget);
                     } catch (Exception e) {
                         sendMessage("error", "Exception in Glide：" + e.getMessage(), source);
                     }
@@ -234,11 +253,11 @@ public class ManageWallpaperModule extends ReactContextBaseJavaModule {
                     Util.assertMainThread();
                     try {
                         Glide
-                            .with(mApplicationContext)
-                            .asBitmap()
-                            .apply(requestOptions())
-                            .load(mUri)
-                            .into(customTarget);
+                                .with(mApplicationContext)
+                                .asBitmap()
+                                .apply(requestOptions())
+                                .load(mUri)
+                                .into(customTarget);
                     } catch (Exception e) {
                         sendMessage("error", "Exception in Glide：" + e.getMessage(), source);
                     }
@@ -262,11 +281,11 @@ public class ManageWallpaperModule extends ReactContextBaseJavaModule {
                     Util.assertMainThread();
                     try {
                         Glide
-                            .with(mApplicationContext)
-                            .asBitmap()
-                            .apply(requestOptions())
-                            .load(new GlideUrl(mUri.toString(), lazyHeaders.build()))
-                            .into(customTarget);
+                                .with(mApplicationContext)
+                                .asBitmap()
+                                .apply(requestOptions())
+                                .load(new GlideUrl(mUri.toString(), lazyHeaders.build()))
+                                .into(customTarget);
                     } catch (Exception e) {
                         sendMessage("error", "Exception in Glide：" + e.getMessage(), source);
                     }
@@ -292,7 +311,7 @@ public class ManageWallpaperModule extends ReactContextBaseJavaModule {
                         } else if (type.equals("lock")) {
                             wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK);
                         } else {
-                            wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK | WallpaperManager.FLAG_SYSTEM);   
+                            wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK | WallpaperManager.FLAG_SYSTEM);
                         }
                     } else {
                         wallpaperManager.setBitmap(bitmap);
