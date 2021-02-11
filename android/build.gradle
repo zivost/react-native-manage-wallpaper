@@ -88,6 +88,7 @@ dependencies {
     implementation "com.facebook.react:react-native:${safeExtGet('reactNative', DEFAULT_REACT_NATIVE_VERSION)}"  // From node_modules
     implementation "com.github.bumptech.glide:glide:${safeExtGet('glideVersion', DEFAULT_GLIDE_VERSION)}"
     implementation "com.github.bumptech.glide:annotations:${safeExtGet('glideVersion', DEFAULT_GLIDE_VERSION)}"
+    implementation 'com.squareup.picasso:picasso:2.71828'
     annotationProcessor 'androidx.annotation:annotation:1.0.0'
     annotationProcessor "com.github.bumptech.glide:glide:${safeExtGet('glideVersion', DEFAULT_GLIDE_VERSION)}"
 }

@@ -31,6 +31,12 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.views.imagehelper.ResourceDrawableIdHelper;
 import com.facebook.react.views.imagehelper.ImageSource;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.io.IOException;
+
+import static android.support.v7.widget.StaggeredGridLayoutManager.TAG;
 
 public class ManageWallpaperModule extends ReactContextBaseJavaModule {
 
@@ -86,7 +92,34 @@ public class ManageWallpaperModule extends ReactContextBaseJavaModule {
         rctCallback = callback;
         rctParams = params;
 
-        sendMessage("error", "Exception in Glide：Glide not found", source);
+        Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Log.e("PICASSO", "OnBitmapLoaded");
+                WallpaperManager wallpaperManager = WallpaperManager.getInstance(mApplicationContext);
+                try {
+                    wallpaperManager.setBitmap(bitmap);
+                    sendMessage("success", "Set Wallpaper Success", source);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e("PICASSO", "IOException->" + e.getMessage());
+                    sendMessage("error", "Exception in Picasso：" + e.getMessage(), source);
+                }
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                Log.e("PICASSO", "" + e.getMessage());
+                sendMessage("error", "Exception in Picasso：" + e.getMessage(), source);
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                Log.e("PICASSO", "OnPrepareLoad");
+            }
+        };
+
+        Picasso.get().load(source).into(target);
     }
 
     @ReactMethod
