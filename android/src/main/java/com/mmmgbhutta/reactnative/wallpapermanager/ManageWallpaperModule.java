@@ -86,6 +86,28 @@ public class ManageWallpaperModule extends ReactContextBaseJavaModule {
         rctCallback = callback;
         rctParams = params;
 
+        sendMessage("error", "Exception in Glide：Glide not found", source);
+    }
+
+    @ReactMethod
+    public void setWallpaper1(final ReadableMap params, final String type, Callback callback) {
+
+        final String source = params.hasKey("uri") ? params.getString("uri") : null;
+        ReadableMap headers = params.hasKey("headers") ? params.getMap("headers") : null;
+
+        if (rctCallback != null) {
+            WritableMap map = Arguments.createMap();
+
+            map.putString("status", "error");
+            map.putString("msg", "busy");
+            map.putString("url", source);
+            callback.invoke(map);
+            return;
+        }
+
+        rctCallback = callback;
+        rctParams = params;
+
         final CustomTarget<Bitmap> customTarget = this.getCustomTarget(source, type);
         mCurrentActivity = getCurrentActivity();
 
